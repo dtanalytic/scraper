@@ -136,8 +136,8 @@ def writeDfThread(page_parser,messages_queue, product_last_datetime):
        with open('params_page_parser', 'wb') as f:
            tuple_params = page_parser.getClassParams()
            pickle.dump(tuple_params, f)
-
-       ctypes.windll.user32.MessageBoxW(0, "Stop Exception", "Warning!", 32)
+       messages_queue.put('остановка')
+       # ctypes.windll.user32.MessageBoxW(0, "Stop Exception", "Warning!", 32)
         #messages_queue.task_done()
 
 

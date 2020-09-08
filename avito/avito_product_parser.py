@@ -106,6 +106,7 @@ class AvitoProductParser(shop_product_parser.ShopProductsParser):
                 date_time = date_time +' ' +time_part+ ' ' + str(datetime.now().year)
 
 
-        locale.setlocale(locale.LC_ALL, 'en')
+        # locale.setlocale(locale.LC_ALL, 'en')
+        locale.setlocale(locale.LC_ALL, 'en_US.utf8')
         return date_time
 

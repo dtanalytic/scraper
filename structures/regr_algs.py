@@ -35,8 +35,8 @@ def set_rus_locale():
     try:        
         yield
     finally:    
-        locale.setlocale(locale.LC_ALL, 'en')
-        
+        # locale.setlocale(locale.LC_ALL, 'en')
+        locale.setlocale(locale.LC_ALL, 'en_US.utf8')
         
 def date_time_tr(s,month_dict):
     f_gr = s.split()    

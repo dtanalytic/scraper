@@ -150,4 +150,5 @@ if __name__=='__main__':
 
     fmt_from_datetime = '%d %B %H:%M %Y'
     datetime = time.strftime(fmt_from_datetime,time.localtime(product_params['date_time']))
-    locale.setlocale(locale.LC_ALL, 'en')
+    # locale.setlocale(locale.LC_ALL, 'en')
+    locale.setlocale(locale.LC_ALL, 'en_US.utf8')

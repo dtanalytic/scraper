@@ -371,7 +371,7 @@ if __name__=='__main__':
    # reload(my_util.df_util)
 
 
-    df = pd.read_csv(r'c:\work\dev\python\progs\scraper\flats.csv')
+    df = pd.read_csv(r'../flats.csv')
     # df2 = pd.read_csv(r'c:\work\dev\python\progs\scraper\flats2.csv')
     # df_new = pd.concat([df2, df], sort=False, ignore_index=True)
     # df_new.to_csv('flats.csv', index=False)
@@ -394,17 +394,17 @@ if __name__=='__main__':
 
     #reg,r2,rmse,r2_tr,rmse_tr = a.analyse('cost',quantile_num=0.99,std_num=2, regr_type='elastic')
 
-    np.random.seed(7)
-    reg_stb_name = 'cost'
-    regr_type = 'linear'
-    a.analyse_1steps(quantile_num= 0.99, std_num= 2)
-    a.normalize()
-    a.join_parts()
+    # np.random.seed(7)
+    # reg_stb_name = 'cost'
+    # regr_type = 'linear'
+    # a.analyse_1steps(quantile_num= 0.99, std_num= 2)
+    # a.normalize()
+    # a.join_parts()
 
 
-    reg = RandomForestRegressor()
-    reg = SGDRegressor(n_iter=1,warm_start=True,penalty=None,learning_rate='constant',eta0=0.0005)
-    x_train, x_test, y_train, y_test = train_test_split(a.df.drop(['cost'], axis=1), a.df['cost'], test_size=0.2)
+    # reg = RandomForestRegressor()
+    # reg = SGDRegressor(n_iter=1,warm_start=True,penalty=None,learning_rate='constant',eta0=0.0005)
+    # x_train, x_test, y_train, y_test = train_test_split(a.df.drop(['cost'], axis=1), a.df['cost'], test_size=0.2)
 
 
 

@@ -156,7 +156,6 @@ class ShopProductsParser(metaclass=ABCMeta):
 
                 if not product_last_datetime=='':
                     locale.setlocale(locale.LC_ALL, '')
-
                     #a = self.makeDateStb(product_params['date_time'])
 
                     if self.makeDateStb(product_params['date_time'])<=product_last_datetime:
@@ -164,7 +163,8 @@ class ShopProductsParser(metaclass=ABCMeta):
                         self.records_ignore= self.records_ignore+1
                         messages_queue.put('ignore {}'.format(self.records_ignore))
 
-                    locale.setlocale(locale.LC_ALL, 'en')
+                    # locale.setlocale(locale.LC_ALL, 'en')
+                    locale.setlocale(locale.LC_ALL, 'en_US.utf8')
                     if self.records_ignore>9: raise NoMoreNewRecordsException
 
 
@@ -190,9 +190,13 @@ class ShopProductsParser(metaclass=ABCMeta):
                           'июля': 'июль', 'августа': 'август', 'сентября': 'сентябрь', 'октября': 'октябрь', \
                           'ноября': 'ноябрь', 'декабря': 'декабрь'}
 
+            # for k, v in month_dict.items():
+            #     if x.lower().find(k) != -1:
+            #         x = x.lower().replace(k, v)
+            #         break
             for k, v in month_dict.items():
-                if x.lower().find(k) != -1:
-                    x = x.lower().replace(k, v)
+                if x.lower().find(v) != -1:
+                    x = x.lower().replace(v,k)
                     break
 
             fmt = '%d %B %H:%M %Y'

@@ -16,7 +16,7 @@ from sklearn.linear_model import ElasticNetCV
 import avito.avito_flat_parser
 from sklearn.model_selection import KFold
 from itertools import combinations
-import structures.dfanalyser
+
 from scipy.spatial import distance
 import os
 

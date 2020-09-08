@@ -33,7 +33,8 @@ class YoulaProductParser(shop_product_parser.ShopProductsParser):
        #a = time.strptime(datetime_str, fmt_to_datetime)
        fmt_from_datetime = '%d %B %H:%M %Y'
        datetime = time.strftime(fmt_from_datetime, time.localtime(str))
-       locale.setlocale(locale.LC_ALL, 'en')
+       # locale.setlocale(locale.LC_ALL, 'en')
+       locale.setlocale(locale.LC_ALL, 'en_US.utf8')
        return datetime
 
     def getProductParams(self, product_params, url):
