@@ -14,10 +14,6 @@ import sys
 sys.path.append('../')
 from general_modules import net_scrape
 
-def set_trace():
-	from IPython.core.debugger import Pdb
-	import sys
-	Pdb(color_scheme='Linux').set_trace(sys._getframe().f_back)
 
 class StopException(Exception):
     pass
@@ -125,7 +121,7 @@ class ShopProductsParser(metaclass=ABCMeta):
        finally:
             pass
 
-    def getProductItems(self,messages_queue, product_last_datetime):
+    def getProductItems(self, messages_queue, product_last_datetime):
        #i=0
        #max_sec=60
        start = self.num_records_pass_in_page
@@ -231,7 +227,7 @@ if __name__=='__main__':
     import preferences_window
     page_parser = preferences_window.Window.getSiteClass()
 
-    # cur_url = page_parser.getNextURL(page_parser.cur_url, page_parser.tag_container_pages, page_parser.tag_page)
+    cur_url = page_parser.getNextURL(page_parser.cur_url, page_parser.tag_container_pages, page_parser.tag_page)
 
     # list_tags = page_parser.getListFrom2Tags(page_parser.cur_url, page_parser.tag_container_pages, page_parser.tag_page)
     # if list_tags:
@@ -246,17 +242,17 @@ if __name__=='__main__':
     #        a= page_parser.makeUrlFromParts(page_parser.url_base, page_parser.url_add, page_parser.params)
 
 
-    html = net_scrape.get_url_delay(1, 'https://www.avito.ru/vladikavkaz/kvartiry/prodam-ASgBAgICAUSSA8YQ?p=1').text
-    bsObj = BeautifulSoup(html, 'lxml')
+    # html = net_scrape.get_url_delay(1, 'https://www.avito.ru/vladikavkaz/kvartiry/prodam-ASgBAgICAUSSA8YQ?p=1').text
+    # bsObj = BeautifulSoup(html, 'lxml')
 
-    tag_container_el = 'div', 'js-catalog_serp'
-    tag_el = 'div', 'item_table'
-    tag_container_pages = 'div', 'pagination-root-2oCjZ'
+    # tag_container_el = 'div', 'js-catalog_serp'
+    # tag_el = 'div', 'item_table'
+    # tag_container_pages = 'div', 'pagination-root-2oCjZ'
 
-    tag_page = 'span', 'pagination-item-1WyVp'
+    # tag_page = 'span', 'pagination-item-1WyVp'
 
 
-    tag_list = bsObj.find(tag_container_pages[0], class_=tag_container_pages[1]).find_all(tag_page[0], class_=tag_page[1])
+    # tag_list = bsObj.find(tag_container_pages[0], class_=tag_container_pages[1]).find_all(tag_page[0], class_=tag_page[1])
     
     
     

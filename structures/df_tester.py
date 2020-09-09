@@ -13,7 +13,7 @@ from sklearn.metrics import r2_score
 import numpy as np
 #from avito.avito_flat_parser import AvitoFlatParser
 from sklearn.linear_model import ElasticNetCV
-import avito.avito_flat_parser
+# import avito.avito_flat_parser
 from sklearn.model_selection import KFold
 from itertools import combinations
 

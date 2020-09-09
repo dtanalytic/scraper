@@ -16,6 +16,7 @@ import shutil
 from shop_product_parser import StopException
 from my_util.change_page_params import construct_page_params
 from my_util.change_last_date import construct_last_date
+from tkinter import messagebox
 
 import logging
 
@@ -136,7 +137,9 @@ def writeDfThread(page_parser,messages_queue, product_last_datetime):
        with open('params_page_parser', 'wb') as f:
            tuple_params = page_parser.getClassParams()
            pickle.dump(tuple_params, f)
+
        messages_queue.put('остановка')
+       messagebox.showinfo('остановка')
        # ctypes.windll.user32.MessageBoxW(0, "Stop Exception", "Warning!", 32)
         #messages_queue.task_done()
 
@@ -218,7 +221,7 @@ class Window(ttk.Frame):
                                      command=lambda:construct_last_date(self))
 
         preferences_Menu.add_separator()
-        preferences_Menu.add_command(label="Quit", underline=0, command=master.quit)
+        preferences_Menu.add_command(label="Quit", underline=0, command=master.destroy)
         menubar.add_cascade(label="File", underline=0, menu=preferences_Menu)
 
 
@@ -226,7 +229,7 @@ class Window(ttk.Frame):
         start_pause_Button = tk.Button(master, text='start', command=lambda: start_pause(start_pause_Button, self.page_parser,self.messages_queue,self.product_last_date_var,self.from_date_flag_var))
         start_pause_Button.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        quit_pause_Button = tk.Button(master, text='Quit', command=master.quit)
+        quit_pause_Button = tk.Button(master, text='Quit', command=master.destroy)
         quit_pause_Button.grid(row=0, column=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 
 

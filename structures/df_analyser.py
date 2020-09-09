@@ -12,7 +12,7 @@ from sklearn.metrics import r2_score
 import numpy as np
 #from avito.avito_flat_parser import AvitoFlatParser
 from sklearn.linear_model import ElasticNetCV
-import avito.avito_flat_parser
+# import avito.avito_flat_parser
 from sklearn.model_selection import KFold
 from itertools import combinations
 from sklearn.feature_selection import RFE
@@ -371,7 +371,7 @@ if __name__=='__main__':
    # reload(my_util.df_util)
 
 
-    df = pd.read_csv(r'../flats.csv')
+    df = pd.read_csv(r'../flats_add.csv')
     # df2 = pd.read_csv(r'c:\work\dev\python\progs\scraper\flats2.csv')
     # df_new = pd.concat([df2, df], sort=False, ignore_index=True)
     # df_new.to_csv('flats.csv', index=False)
