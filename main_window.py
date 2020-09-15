@@ -29,7 +29,7 @@ def writeDfThread(page_parser,messages_queue, product_last_datetime):
 
    try:
 
-        page_parser.startListProductsParser(messages_queue, product_last_datetime)
+        page_parser.start_items_parser(messages_queue, product_last_datetime)
         # в принципе сюда попадем только если функция сверху завершится без исключений, например StopException. но есть еще случай - если достигнем количество скачанных страниц (поэтому там ставим pause_flag)
         if not page_parser.pause_flag:
             flats_frame = DataFrame(page_parser.products_list)
@@ -116,7 +116,7 @@ def writeDfThread(page_parser,messages_queue, product_last_datetime):
 
            messages_queue.put('Исключение {}'.format(e))
 
-       flats_frame = DataFrame(page_parser.products_list)
+       flats_frame = DataFrame(page_parser.items_list)
 
        if product_last_datetime:
            flats_file_name = 'flats_add.csv'

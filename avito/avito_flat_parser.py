@@ -51,8 +51,8 @@ class AvitoFlatParser(avito_product_parser.AvitoProductParser):
 
     flag_continue_searching_dist=True
 
-    def __init__(self,cur_url, tag_container_el,tag_el,tag_container_pages, tag_page, page_param, pages_load_stop):
-        super().__init__(cur_url, tag_container_el,tag_el,tag_container_pages, tag_page, page_param,pages_load_stop)
+    def __init__(self,cur_url, tag_container_el,tag_el,tag_container_pages, tag_page, page_param, pages_load_stop_num):
+        super().__init__(cur_url, tag_container_el,tag_el,tag_container_pages, tag_page, page_param,pages_load_stop_num)
 
     @classmethod
     def makeStbsFloat(cls,df,list_stbs):

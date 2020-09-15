@@ -14,39 +14,16 @@ class AvitoProductParser(shop_product_parser.ShopProductsParser):
     #PRODUCT_ITEM_HREF_CLASS = 'item-description-title-link'
 
     PRODUCT_ITEM_HREF_CLASS = 'snippet-link'
-    def __init__(self,cur_url, tag_container_el,tag_el,tag_container_pages, tag_page, page_param, pages_load_stop):
+    def __init__(self,cur_url, tag_container_el,tag_el,tag_container_pages, tag_page, page_param, pages_load_stop_num):
 
         self.tag_container_pages = tag_container_pages if isinstance(tag_container_pages, dict) else {
             'name': tag_container_pages.split(',')[0], 'class': tag_container_pages.split(',')[1]}
         self.tag_page = tag_page if isinstance(tag_page, dict) else {'name': tag_page.split(',')[0],
                                                                      'class': tag_page.split(',')[1]}
-        super().__init__(cur_url, tag_container_el,tag_el,page_param, pages_load_stop)
+        super().__init__(cur_url, tag_container_el,tag_el,page_param, pages_load_stop_num)
 
 
-    # def getNextURL(self,url,tag_container,tag):
-    #     try:
-    #         list_tags = self.getListFrom2Tags(url, tag_container, tag)
-    #         if list_tags:
-    #             total_pages_piece = list_tags[-1].get('href')
-    #             url_base, url_add, params = self.parseUrl(self.url_base + total_pages_piece)
-    #             pages_count = params[self.page_param]
-    #             current_page_num= self.params[self.page_param]
-    #             if int(current_page_num)+1<=int(pages_count):
-    #                 self.params[self.page_param] = str(int(current_page_num)+1)
-    #                 return self.makeUrlFromParts(self.url_base, self.url_add, self.params)
-    #             else:
-    #                 return ''
-    #
-    #         else:
-    #             raise problGetNextPageException
-    #     finally:
-    #         pass
-    #         #print('problems with getting next page')
-    #     # except problGetNextPageException as e:
-    #     #     print('problems with getting next page or they are out')
-    #     #     return ''
-    #
-    #     # заполняет словарь параметров для объекта
+
     def getNextURL(self,url,tag_container,tag):
 
             list_tags = self.getListFrom2Tags(url, tag_container, tag)
@@ -60,9 +37,9 @@ class AvitoProductParser(shop_product_parser.ShopProductsParser):
                     return self.makeUrlFromParts(self.url_base, self.url_add, self.params)
 
 
-
-            else:
-                 raise problGetNextPageException
+            #
+            # else:
+            #      raise ProblGetNextPageException
 
 
 

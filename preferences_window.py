@@ -3,7 +3,7 @@ import tkinter as tk
 import configparser
 from avito import avito_flat_parser
 from youla import youla_flat_parser
-
+from ufc import ufc_fights_parser
 
 
 class Window(tk.Toplevel):
@@ -29,6 +29,8 @@ class Window(tk.Toplevel):
         if cls.site_name=='avito':return avito_flat_parser.AvitoFlatParser(**Window.getSiteParams('avito'))
 
         if cls.site_name=='youla':return youla_flat_parser.YoulaFlatParser(**Window.getSiteParams('youla'))
+        
+        if cls.site_name=='ufc_fights':return ufc_fights_parser.UFCFightsParser(**Window.getSiteParams('ufc_fights'))
 
 
 
@@ -37,7 +39,9 @@ class Window(tk.Toplevel):
         cfg = configparser.ConfigParser()
         cfg.read('settings.cfg')
         init_params_dict = {i:j for i,j in cfg[site].items()}
-        init_params_dict['pages_load_stop'] = cfg['general']['pages_load_stop']
+        init_params_dict['pages_load_stop_num'] = int(cfg['general']['pages_load_stop_num'])
+        init_params_dict['rec_ign_bef_stop_max'] = int(cfg['general']['rec_ign_bef_stop_max'])
+        init_params_dict['delay'] = int(cfg['general']['delay'])
         return init_params_dict
 
     def saveParams(self):
@@ -104,7 +108,7 @@ class Window(tk.Toplevel):
         self.cncl_Button = tk.Button(self, text='cancel', command=self.destroy)
 
 
-        sites = ['avito', 'youla', 'ebay']
+        sites = ['avito', 'youla', 'ebay', 'ufc_fights']
         for i, site in enumerate(sites):
             self_Radiobutton = tk.Radiobutton(self, text=site,
                                            command=self.onPressRadioBut,
