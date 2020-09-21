@@ -111,9 +111,9 @@ def writeDfThread(page_parser,messages_queue, product_last_datetime):
             messages_queue.put('обработка завершена, можно выйти из программы')
 
    except (StopException,Exception) as e:
-
+       
+       #  переписать not isinstance(e, StopException)
        if not StopException:
-
            messages_queue.put('Исключение {}'.format(e))
 
        flats_frame = DataFrame(page_parser.items_list)
@@ -135,7 +135,7 @@ def writeDfThread(page_parser,messages_queue, product_last_datetime):
        flats_frame.to_csv(flats_file_name, index=False)
 
        with open('params_page_parser', 'wb') as f:
-           tuple_params = page_parser.getClassParams()
+           tuple_params = page_parser.save_class_params()
            pickle.dump(tuple_params, f)
 
        messages_queue.put('остановка')
@@ -169,7 +169,7 @@ def outer_f():
 
                     with open('params_page_parser', 'rb') as f:
                         tuple_params = pickle.load(f)
-                        page_parser_inner.setClassParams(tuple_params)
+                        page_parser_inner.load_class_params(tuple_params)
 
                     os.remove('params_page_parser')
 
@@ -201,7 +201,7 @@ class Window(ttk.Frame):
         self.messages_queue = queue.Queue()
 
 
-        #self.page_parser = avito_flat_parser.AvitoFlatParser(**preferences_window.Window.getSiteParams('youla'))
+        #self.page_parser = avito_flat_parser.AvitoFlatParser(**preferences_window.Window.get_site_params('youla'))
 
         menubar = tk.Menu(master)
         master.config(menu=menubar)
@@ -261,8 +261,8 @@ class Window(ttk.Frame):
         master.columnconfigure(2, weight=1)
         master.columnconfigure(3, weight=1)
 
-        self.page_parser = preferences_window.Window.getSiteClass()
-        #self.page_parser=avito_flat_parser.AvitoFlatParser(**preferences_window.Window.getSiteParams('avito'))
+        self.page_parser = preferences_window.Window.get_site_class()
+        #self.page_parser=avito_flat_parser.AvitoFlatParser(**preferences_window.Window.get_site_params('avito'))
 
         self.messages_queue.put('начальный статус')
         self.repeater(start_pause_Button,status_Label)

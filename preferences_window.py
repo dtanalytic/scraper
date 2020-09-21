@@ -19,23 +19,23 @@ class Window(tk.Toplevel):
         self.wait_window()
 
     @classmethod
-    def getSiteClass(cls):
+    def get_site_class(cls):
 
         if cls.site_name=='':
             cfg = configparser.ConfigParser()
             cfg.read('settings.cfg')
             cls.site_name = cfg['general']['site_name']
 
-        if cls.site_name=='avito':return avito_flat_parser.AvitoFlatParser(**Window.getSiteParams('avito'))
+        if cls.site_name=='avito':return avito_flat_parser.AvitoFlatParser(**Window.get_site_params('avito'))
 
-        if cls.site_name=='youla':return youla_flat_parser.YoulaFlatParser(**Window.getSiteParams('youla'))
+        if cls.site_name=='youla':return youla_flat_parser.YoulaFlatParser(**Window.get_site_params('youla'))
         
-        if cls.site_name=='ufc_fights':return ufc_fights_parser.UFCFightsParser(**Window.getSiteParams('ufc_fights'))
+        if cls.site_name=='ufc_fights':return ufc_fights_parser.UFCFightsParser(**Window.get_site_params('ufc_fights'))
 
 
 
     @classmethod
-    def getSiteParams(clk,site):
+    def get_site_params(clk,site):
         cfg = configparser.ConfigParser()
         cfg.read('settings.cfg')
         init_params_dict = {i:j for i,j in cfg[site].items()}
@@ -57,14 +57,14 @@ class Window(tk.Toplevel):
 
         #провеоить работу сменщика сайта
         Window.site_name= self.site_radio_but.get()
-        self.master.page_parser = Window.getSiteClass()
+        self.master.page_parser = Window.get_site_class()
         #self.master.page_parser = avito_flat_parser.AvitoFlatParser(**init_params_dict)
 
         self.destroy()
 
     def onPressRadioBut(self):
         site = self.site_radio_but.get()
-        init_params_dict = Window.getSiteParams(site)
+        init_params_dict = Window.get_site_params(site)
         self.setSiteParams(init_params_dict)
 
     def setSiteParams(self, init_params_dict):
@@ -118,7 +118,7 @@ class Window(tk.Toplevel):
 
         self.site_radio_but.set(sites[1])
 
-        init_params_dict = Window.getSiteParams(self.site_radio_but.get())
+        init_params_dict = Window.get_site_params(self.site_radio_but.get())
         self.setSiteParams(init_params_dict)
 
 
@@ -155,10 +155,10 @@ if __name__ == '__main__':
 
    # application.mainloop()
 
-    a  = Window.getSiteParams('avito')
-    b = Window.getSiteParams('ebay')
+    a  = Window.get_site_params('avito')
+    b = Window.get_site_params('ebay')
 
-    #debug(Window.getSiteParams,'avito')
+    #debug(Window.get_site_params,'avito')
 
    #Window.temp()
    #res = debug(Window.temp)

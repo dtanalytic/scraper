@@ -225,7 +225,7 @@ class ShopProductsParser(metaclass=ABCMeta):
 if __name__=='__main__':
 
     import preferences_window
-    page_parser = preferences_window.Window.getSiteClass()
+    page_parser = preferences_window.Window.get_site_class()
 
     cur_url = page_parser.getNextURL(page_parser.cur_url, page_parser.tag_container_pages, page_parser.tag_page)
 
