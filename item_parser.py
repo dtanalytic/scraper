@@ -111,8 +111,9 @@ class ItemsParser(metaclass=ABCMeta):
                 # зависит от конкретного сайта
                 items_hrefs = self.get_item_hrefs(self.cur_url,self.tag_container_el,self.tag_el, self.delay)
                 # собирает записи по полученным ссылкам, реализована ранее
-                items_list = self.get_items_params(items_hrefs, messages_queue, item_last_datetime)
-                self.items_list.extend(items_list)
+                self.get_items_params(items_hrefs, messages_queue, item_last_datetime)
+                # items_list = self.get_items_params(items_hrefs, messages_queue, item_last_datetime)
+                # self.items_list.extend(items_list)
                 
                 if messages_queue:
                     time2 = time.time()
@@ -139,8 +140,7 @@ class ItemsParser(metaclass=ABCMeta):
             pass
         
     def get_items_params(self, items_hrefs, messages_queue = None, item_last_datetime=''):
-       start = self.records_pass_in_page_num        
-       items_list = []
+       start = self.records_pass_in_page_num 
        try:           
             for j in range(start, len(items_hrefs)):
               if not self.pause_flag:               
@@ -158,7 +158,7 @@ class ItemsParser(metaclass=ABCMeta):
                     if self.rec_ign_bef_stop_num>self.rec_ign_bef_stop_max: raise NoMoreNewRecordsException
                 # если не надо игнорировать то добавляем
                 if records_ignore_was == self.rec_ign_bef_stop_num:
-                     items_list.append(item_params)
+                     self.items_list.append(item_params)
 
                 self.records_pass_in_page_num += 1
                 if messages_queue:
@@ -168,8 +168,7 @@ class ItemsParser(metaclass=ABCMeta):
               else:
                 raise StopException
        finally:
-            return items_list
-                    
+           pass
             
     
 
@@ -194,17 +193,50 @@ if __name__=='__main__':
     np.random.seed(1)
     from ufc.ufc_fights_parser import UFCFightsParser
     # адрес www и ?
-    cur_url = 'http://www.ufcstats.com/event-details/33b2f68ef95252e0?'
-    events_url='http://www.ufcstats.com/statistics/events/completed?page=1'
-    tag_container_events='tbody,,'
-    tag_event='a,class,b-link b-link_style_black'
+    cur_url = 'http://www.ufcstats.com/event-details/b26d3e3746fb4024?'
+    events_url = 'http://www.ufcstats.com/statistics/events/completed?page=2'
+    
+    
+    tag_container_events = 'tbody,,'
+    tag_event = 'a,class,b-link b-link_style_black'
     tag_container_el = 'tbody,class,b-fight-details__table-body'
     tag_el = 'a,class,b-flag b-flag_style_green'
     page_param = 'page'
     delay = 1
     ufc_fights = UFCFightsParser(cur_url,events_url,delay,page_param,tag_container_events, tag_event, tag_container_el,tag_el)
     
-    ufc_fights.start_items_parser()
+    saved_d = {
+
+        'cur_url':'http://www.ufcstats.com/event-details/5df17b3620145578?',
+        # номер страницы с турниром на сайте
+        # задается в виде строки для внутрен. манипуляций
+        'cur_page':'2',
+        # номер записи с которой начнется скачивание
+        'records_pass_in_page_num':2,
+        # полный url страницы с турнирами
+        'events_url':'http://www.ufcstats.com/statistics/events/completed?page=2',
+        # номер турнира на странице ссылок на турниры
+        'event_ind':0,
+        'events_hrefs':['http://www.ufcstats.com/event-details/5df17b3620145578'],
+        'event_date':'February 15, 2020',
+        'event_place':'vlad',
+        'event_attendence':1212
+                }
+
+    
+    ufc_fights.load_class_params(saved_d)
+    
+    items_hrefs = ufc_fights.get_item_hrefs(ufc_fights.cur_url,\
+                            ufc_fights.tag_container_el,ufc_fights.tag_el, ufc_fights.delay)
+    # собирает записи по полученным ссылкам, реализована ранее
+    # ufc_fights.get_items_params(items_hrefs)
+
+    url = items_hrefs[ufc_fights.records_pass_in_page_num]
+                
+    item_params = ufc_fights.get_one_item_params(url)
+    'Montana' in item_params['Fighter_left']
+    
+    # ufc_fights.start_items_parser()
     # hrefs=['http://ufcstats.com/fight-details/f8dd1e75978a3957',
     #        'http://ufcstats.com/fight-details/d395828f5cb045a5',
     #        'http://ufcstats.com/fight-details/4e77cc2c8d604241',

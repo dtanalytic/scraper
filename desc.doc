@@ -1,0 +1,17 @@
+﻿
+запуск
+удаляем last_date от прошлых скачек
+
+
+
+
+
+в соответствии с шаблоном регулярных выражений 
+новый curl с www и вопросом на конце:
+http://www.ufcstats.com/event-details/542db012217ecb83?
+
+
+
+м.б. проблемы
+startListProductsParser(self, messages_queue, product_last_datetime):
+порядок поменял если есть вызовы без параметров startListProductsParser

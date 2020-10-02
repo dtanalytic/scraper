@@ -25,76 +25,76 @@ logging.basicConfig(level='INFO', filename='work_meta.log',format=fmt)
 logger = logging.getLogger('scraper_log')
 
 
-def writeDfThread(page_parser,messages_queue, product_last_datetime):
+def writeDfThread(page_parser,messages_queue, item_last_datetime):
 
    try:
 
-        page_parser.start_items_parser(messages_queue, product_last_datetime)
+        page_parser.start_items_parser(messages_queue, item_last_datetime)
         # в принципе сюда попадем только если функция сверху завершится без исключений, например StopException. но есть еще случай - если достигнем количество скачанных страниц (поэтому там ставим pause_flag)
         if not page_parser.pause_flag:
-            flats_frame = DataFrame(page_parser.products_list)
+            frame = DataFrame(page_parser.items_list)
 
-            #flats_frame = ''
-            df_flat_age = pd.read_csv(page_parser.flats_age_filename, sep=';')
-            dict_house_age = avito.avito_flat_parser.AvitoFlatParser.get_house_age(df_flat_age)
+            #frame = ''
+            # df_flat_age = pd.read_csv(page_parser.items_age_filename, sep=';')
+            # dict_house_age = avito.avito_flat_parser.AvitoFlatParser.get_house_age(df_flat_age)
 
-            logger.info('complete downloading flats_frame size - {}'.format(len(flats_frame)))
+            logger.info('complete downloading frame size - {}'.format(len(frame)))
 
 
-            if os.path.exists('flats_add.csv') and os.path.getsize('flats_add.csv')>10:
-                old_flats_frame = pd.read_csv('flats_add.csv')
-                logger.info('flats_add exists it has size - {}'.format(len(old_flats_frame)))
-                if len(flats_frame) != 0:
-                    flats_frame = pd.concat([flats_frame, old_flats_frame], sort=False, ignore_index=True)
+            if os.path.exists('items_add.csv') and os.path.getsize('items_add.csv')>10:
+                old_frame = pd.read_csv('items_add.csv')
+                logger.info('items_add exists it has size - {}'.format(len(old_frame)))
+                if len(frame) != 0:
+                    frame = pd.concat([frame, old_frame], sort=False, ignore_index=True)
                 else:
-                    flats_frame = old_flats_frame
-                flats_frame.to_csv('ark_add/flats_add {}.csv'.format(date.today().isoformat()), index=False)
-                logger.info('unified flats_frame and flats_add size - {}'.format(len(flats_frame)))
-                os.remove('flats_add.csv')
-                logger.info('flats_add removed')
+                    frame = old_frame
+                frame.to_csv('ark_add/items_add {}.csv'.format(date.today().isoformat()), index=False)
+                logger.info('unified frame and items_add size - {}'.format(len(frame)))
+                os.remove('items_add.csv')
+                logger.info('items_add removed')
 
 
             old_size = 0
             new_size = 0
-            if os.path.exists('flats.csv'):
-                shutil.copy('flats.csv', 'ark/flats {}.csv'.format(date.today().isoformat()))
-                old_flats_frame = pd.read_csv('flats.csv')
-                old_size = len(old_flats_frame)
-                logger.info('flats.csv exists has size - {}'.format(len(old_flats_frame)))
-                if len(flats_frame) != 0:
-                    flats_frame = pd.concat([flats_frame, old_flats_frame], sort=False, ignore_index=True)
+            if os.path.exists('items.csv'):
+                shutil.copy('items.csv', 'ark/items {}.csv'.format(date.today().isoformat()))
+                old_frame = pd.read_csv('items.csv')
+                old_size = len(old_frame)
+                logger.info('items.csv exists has size - {}'.format(len(old_frame)))
+                if len(frame) != 0:
+                    frame = pd.concat([frame, old_frame], sort=False, ignore_index=True)
                 else:
-                    flats_frame = old_flats_frame
-                logger.info('flats.csv with new records has size - {}'.format(len(flats_frame)))
+                    frame = old_frame
+                logger.info('items.csv with new records has size - {}'.format(len(frame)))
 
+            # drop duples
+            # frame = df_drop(frame,list_duples=['total_square', 'total_floors', 'floor', 'rooms_num','house_type', 'adr'])
+            # logger.info('items.csv after dropping duples has size - {} and duples_num - {}'.format(len(frame),frame[frame.duplicated(['total_square', 'total_floors', 'floor', 'rooms_num','house_type', 'adr'])].shape[0]))
+            # new_size = len(frame)
+            # 
+            # #frame.to_csv('items_bef_ya.csv', index=False)
+            # frame.to_csv('items.csv', index=False)
+            # logger.info('new_size - {} versus old_size - {}'.format(new_size, old_size))
 
-            flats_frame = df_drop(flats_frame,list_duples=['total_square', 'total_floors', 'floor', 'rooms_num','house_type', 'adr'])
-            logger.info('flats.csv after dropping duples has size - {} and duples_num - {}'.format(len(flats_frame),flats_frame[flats_frame.duplicated(['total_square', 'total_floors', 'floor', 'rooms_num','house_type', 'adr'])].shape[0]))
-            new_size = len(flats_frame)
-
-            #flats_frame.to_csv('flats_bef_ya.csv', index=False)
-            flats_frame.to_csv('flats.csv', index=False)
-            logger.info('new_size - {} versus old_size - {}'.format(new_size, old_size))
-
-            if len(flats_frame) != 0:
+            if len(frame) != 0:
 
                 # есть что-то новое
                 if new_size > old_size:
 
-                    logger.info('start collecting dists')
+                    # logger.info('start collecting dists')
                     #порядок именно такой, чтобы cl_adr считался в calc_distance_center
-                    # avito.avito_flat_parser.AvitoFlatParser.calc_distance_center(flats_frame, 0, new_size - old_size,\
+                    # avito.avito_flat_parser.AvitoFlatParser.calc_distance_center(frame, 0, new_size - old_size,\
                     #                                                              page_parser.city_name, \
                     #                                                              page_parser.city_cent)
-                    logger.info('start collecting build_ages')
-                    # avito.avito_flat_parser.AvitoFlatParser.calc_flats_age(flats_frame, 0, new_size - old_size,
+                    # logger.info('start collecting build_ages')
+                    # avito.avito_flat_parser.AvitoFlatParser.calc_items_age(frame, 0, new_size - old_size,
                     #                                                        dict_house_age)
 
 
                     # запуск функций от 0 до new_size-old_size
-                    flats_frame.to_csv('flats.csv', index=False)
+                    frame.to_csv('items.csv', index=False)
 
-                    logger.info('flats.csv after calcs has size - {} and duples_num - {} '.format(len(flats_frame),flats_frame[flats_frame.duplicated(['total_square', 'total_floors', 'floor', 'rooms_num','house_type', 'adr'])].shape[0]))
+                    # logger.info('items.csv after calcs has size - {} and duples_num - {} '.format(len(frame),frame[frame.duplicated(['total_square', 'total_floors', 'floor', 'rooms_num','house_type', 'adr'])].shape[0]))
 
 
             # задали last_date в самом начале скачки
@@ -113,33 +113,33 @@ def writeDfThread(page_parser,messages_queue, product_last_datetime):
    except (StopException,Exception) as e:
        
        #  переписать not isinstance(e, StopException)
-       if not StopException:
+       if not isinstance(e, StopException):
            messages_queue.put('Исключение {}'.format(e))
 
-       flats_frame = DataFrame(page_parser.items_list)
+       frame = DataFrame(page_parser.items_list)
 
-       if product_last_datetime:
-           flats_file_name = 'flats_add.csv'
+       if item_last_datetime:
+           items_file_name = 'items_add.csv'
        else:
-           flats_file_name = 'flats.csv'
+           items_file_name = 'items.csv'
 
-       if os.path.exists(flats_file_name) and os.path.getsize(flats_file_name)>10:
-           logger.info('Exception - {} not saved records with {}'.format(len(flats_frame),flats_file_name))
-           old_flats_frame = pd.read_csv(flats_file_name)
+       if os.path.exists(items_file_name) and os.path.getsize(items_file_name)>10:
+           logger.info('Exception - {} not saved records with {}'.format(len(frame),items_file_name))
+           old_frame = pd.read_csv(items_file_name)
            # порядок конкатенации меняем потому что есди у нас с даты идет скачивание, то добавляются новые, а уже к ним
            # старье, иначе качаем старые и добавляются к предыдущим снизу
-           flats_frame = pd.concat([old_flats_frame, flats_frame], sort=False, ignore_index=True)
-           logger.info('with saved {} and new recs unifyed length is - {}'.format(len(old_flats_frame),len(flats_frame)))
+           frame = pd.concat([old_frame, frame], sort=False, ignore_index=True)
+           logger.info('with saved {} and new recs unifyed length is - {}'.format(len(old_frame),len(frame)))
 
-       logger.info('Запись файла {} внутри исключения'.format(flats_file_name))
-       flats_frame.to_csv(flats_file_name, index=False)
+       logger.info('Запись файла {} внутри исключения'.format(items_file_name))
+       frame.to_csv(items_file_name, index=False)
 
        with open('params_page_parser', 'wb') as f:
            tuple_params = page_parser.save_class_params()
            pickle.dump(tuple_params, f)
 
        messages_queue.put('остановка')
-       messagebox.showinfo('остановка')
+       # messagebox.showinfo('остановка')
        # ctypes.windll.user32.MessageBoxW(0, "Stop Exception", "Warning!", 32)
         #messages_queue.task_done()
 
@@ -148,7 +148,7 @@ def outer_f():
 
         pause_flag = [False]
         thread = [None]
-        def inner_f(button, page_parser_inner,messages_queue,product_last_date_var,from_date_flag):
+        def inner_f(button, page_parser_inner,messages_queue,item_last_date_var,from_date_flag):
             #import sys
             #sys.setrecursionlimit(100000)
 
@@ -173,11 +173,11 @@ def outer_f():
 
                     os.remove('params_page_parser')
 
-                if from_date_flag and not product_last_date_var.get()=='':
-                    product_last_datetime = datetime.strptime(product_last_date_var.get(), '%Y-%m-%d %H:%M:%S')
-                else: product_last_datetime=''
+                if from_date_flag and not item_last_date_var.get() == '':
+                    item_last_datetime = datetime.strptime(item_last_date_var.get(), '%Y-%m-%d %H:%M:%S')
+                else: item_last_datetime=''
 
-                thread[0] = threading.Thread(target=writeDfThread,args=(page_parser_inner,messages_queue, product_last_datetime))  # run вызовет target
+                thread[0] = threading.Thread(target=writeDfThread,args=(page_parser_inner,messages_queue, item_last_datetime))  # run вызовет target
                 thread[0].daemon = True
                 thread[0].start()
 
@@ -226,7 +226,7 @@ class Window(ttk.Frame):
 
 
 
-        start_pause_Button = tk.Button(master, text='start', command=lambda: start_pause(start_pause_Button, self.page_parser,self.messages_queue,self.product_last_date_var,self.from_date_flag_var))
+        start_pause_Button = tk.Button(master, text='start', command=lambda: start_pause(start_pause_Button, self.page_parser,self.messages_queue,self.item_last_date_var,self.from_date_flag_var))
         start_pause_Button.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         quit_pause_Button = tk.Button(master, text='Quit', command=master.destroy)
@@ -237,8 +237,8 @@ class Window(ttk.Frame):
         status_Label = ttk.Label(master, textvariable=self.status, text='статус')
         status_Label.grid(row=3, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        self.product_last_date_var = tk.StringVar()
-        product_last_date_Entry = tk.Entry(master, width=30, textvariable=self.product_last_date_var)
+        self.item_last_date_var = tk.StringVar()
+        product_last_date_Entry = tk.Entry(master, width=30, textvariable=self.item_last_date_var)
         product_last_date_Entry.grid(row=1, columnspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         #product_last_date_Entry.config(state='disabled')
@@ -270,13 +270,13 @@ class Window(ttk.Frame):
 
         if os.path.exists('last_date'):
             with open('last_date', 'rb') as f:
-                self.product_last_date_var.set(pickle.load(f))
+                self.item_last_date_var.set(pickle.load(f))
 
 
     def fill_field(self):
         last_date = datetime.today()
-        product_last_datetime_s = last_date.strftime('%Y-%m-%d %H:%M')
-        self.product_last_date_var.set(product_last_datetime_s)
+        item_last__datetime_s = last_date.strftime('%Y-%m-%d %H:%M')
+        self.item_last_date_var.set(item_last__datetime_s)
 
     def repeater(self, button,status_Label):
         if self.page_parser.pause_flag:
