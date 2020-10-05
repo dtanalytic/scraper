@@ -96,3 +96,32 @@
 2020-10-02 09:13:02,726 INFO Exception - 11 not saved records with items.csv
 2020-10-02 09:13:03,006 INFO with saved 4295 and new recs unifyed length is - 4306
 2020-10-02 09:13:03,006 INFO Запись файла items.csv внутри исключения
+2020-10-03 15:29:22,235 INFO Запись файла items.csv внутри исключения
+2020-10-03 15:33:58,945 INFO Exception - 14 not saved records with items.csv
+2020-10-03 15:33:59,022 INFO with saved 105 and new recs unifyed length is - 119
+2020-10-03 15:33:59,022 INFO Запись файла items.csv внутри исключения
+2020-10-03 15:42:14,287 INFO Exception - 86 not saved records with items.csv
+2020-10-03 15:42:14,350 INFO with saved 119 and new recs unifyed length is - 205
+2020-10-03 15:42:14,350 INFO Запись файла items.csv внутри исключения
+2020-10-03 16:02:51,148 INFO Exception - 442 not saved records with items.csv
+2020-10-03 16:02:51,216 INFO with saved 205 and new recs unifyed length is - 647
+2020-10-03 16:02:51,216 INFO Запись файла items.csv внутри исключения
+2020-10-03 16:04:16,442 INFO Exception - 442 not saved records with items.csv
+2020-10-03 16:04:16,537 INFO with saved 647 and new recs unifyed length is - 1089
+2020-10-03 16:04:16,537 INFO Запись файла items.csv внутри исключения
+2020-10-04 07:41:45,570 INFO Запись файла items.csv внутри исключения
+2020-10-04 08:32:58,013 INFO Exception - 718 not saved records with items.csv
+2020-10-04 08:33:01,952 INFO with saved 349 and new recs unifyed length is - 1067
+2020-10-04 08:33:02,449 INFO Запись файла items.csv внутри исключения
+2020-10-04 09:38:54,964 INFO Exception - 1172 not saved records with items.csv
+2020-10-04 09:38:58,598 INFO with saved 1067 and new recs unifyed length is - 2239
+2020-10-04 09:38:58,999 INFO Запись файла items.csv внутри исключения
+2020-10-04 10:41:02,543 INFO Exception - 1115 not saved records with items.csv
+2020-10-04 10:41:02,901 INFO with saved 2239 and new recs unifyed length is - 3354
+2020-10-04 10:41:02,902 INFO Запись файла items.csv внутри исключения
+2020-10-04 15:14:05,940 INFO Exception - 1090 not saved records with items.csv
+2020-10-04 15:14:06,473 INFO with saved 3354 and new recs unifyed length is - 4444
+2020-10-04 15:14:06,473 INFO Запись файла items.csv внутри исключения
+2020-10-05 08:24:07,347 INFO Exception - 13 not saved records with items.csv
+2020-10-05 08:24:07,826 INFO with saved 4444 and new recs unifyed length is - 4457
+2020-10-05 08:24:07,826 INFO Запись файла items.csv внутри исключения

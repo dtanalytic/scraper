@@ -14,33 +14,33 @@ from tkinter import messagebox
 class ScraperTest(unittest.TestCase):
     
     # параметры для инициализации объекта в setUp
-    true_vals_d={'cur_url':'http://www.ufcstats.com/event-details/fc9a9559a05f2704?',
-                 'events_url':'http://www.ufcstats.com/statistics/events/completed?page=1',
+    true_vals_d={'cur_url':'http://www.ufcstats.com/event-details/ad99fa5325519169?',
+                 'events_url':'http://www.ufcstats.com/statistics/events/completed?page=4',
                  
                  }
     # тест на количество боев на странице из true_vals_d['cur_url']
-    num_fights = 12
+    num_fights = 11
     # тест на следующий url
-    next_url = 'http://www.ufcstats.com/event-details/33b2f68ef95252e0?'
+    next_url = 'http://www.ufcstats.com/event-details/620be7e0712d431b?'
     # проверка сохранения состояния между 
     # исключениями или остановами
     start_stop_vals_d = {
         # останов после стольких записей
         # скачаться успеет на одну больше, так как 
         # пока флаг останова установили очередная запись качается
-        'parse_num':25,
+        'parse_num':12,
         # ссылка на текущий турнир после 25 записей
-        'next_url':'http://www.ufcstats.com/event-details/5df17b3620145578?',
+        'next_url':'http://www.ufcstats.com/event-details/620be7e0712d431b?',
         # номер страницы с турниром на сайте,
         # задается в виде строки для внутрен. манипуляций
-        'next_page':'2',
+        'next_page':'5',
         # номер записи, по которую докачали включительно
         # старт произойдет со следующей
         'records_pass_in_page_num':2,
         # полный url страницы с турнирами после 25 записей
-        'next_events_url':'http://www.ufcstats.com/statistics/events/completed?page=2',
+        'next_events_url':'http://www.ufcstats.com/statistics/events/completed?page=5',
         # номер турнира на странице ссылок на турниры
-        'event_ind':1
+        'event_ind':0
                 }
         
     
@@ -122,8 +122,8 @@ if __name__=='__main__':
     import pandas as pd
     df = pd.read_csv('items.csv')
     
-    df2 = df[['Date','event_place','Event']]
+    # df2 = df[['Date','event_place','Event']]
         
-    # with open('params_page_parser','rb') as f_r:
-    #     d = pickle.load(f_r)
+    with open('params_page_parser','rb') as f_r:
+        d = pickle.load(f_r)
     

@@ -73,17 +73,18 @@ class UFCFightsParser(ItemsParser):
                     self.events_hrefs = [item.attrs['href'] for item in events_hrefs_tags]
                     self.event_ind = 0
                     self.events_num = len(self.events_hrefs)
-                    self.event_date, self.event_place, self.event_attendence = \
-                        self.get_event_inf(self.events_hrefs[self.event_ind]+"?",'i,class,b-list__box-item-title') 
 
-                    return self.events_hrefs[self.event_ind]+"?"
         # если турниры в рамках данной страницы
         # еще есть, то просто увеличиваем счетчик ссылок
          else:
             self.event_ind = self.event_ind+1
-            return self.events_hrefs[self.event_ind]+'?'
+            
         
- 
+         self.event_date, self.event_place, self.event_attendence = \
+                        self.get_event_inf(self.events_hrefs[self.event_ind]+"?",'i,class,b-list__box-item-title') 
+
+         return self.events_hrefs[self.event_ind]+"?"
+     
     
     def get_item_hrefs(self, url_bs4,tag_container,tag,delay):
         tag_list,_ = self.get_items_list_from2tags(url_bs4,tag_container,tag,delay)        
@@ -193,7 +194,14 @@ class UFCFightsParser(ItemsParser):
                 det_res[key] = f_det_res_tag.parent.parent.get_text().strip().replace(key,'').strip()
                 
         fight_desc_d.update(det_res)
-
+        
+        with set_eng_locale():
+            event_date = datetime.strptime(self.event_date,'%B %d, %Y')
+            
+        fight_desc_d['Date'] = event_date
+        fight_desc_d['Event_place'] = self.event_place
+        fight_desc_d['Event_attendence'] = self.event_attendence  
+        
         sections = bsObj.findAll('section', {'class':'b-fight-details__section js-fight-section'})
         sections = [sec for i, sec in enumerate(sections) if not i in [0,3] ] 
         sign_st_parent = bsObj.find('div',{'class':'b-fight-details'})
@@ -253,11 +261,8 @@ class UFCFightsParser(ItemsParser):
         for i,round_stat in enumerate(sign_st_rounds):
             UFCFightsParser.fill_2fighters_stat(fight_desc_d,sign_st_head,round_stat,round_num=f'_{(i+1)}')
             
-        with set_eng_locale():
-            event_date = datetime.strptime(self.event_date,'%B %d, %Y')    
-        fight_desc_d['Date'] = event_date
-        fight_desc_d['event_place'] = self.event_place
-        fight_desc_d['event_attendence'] = self.event_attendence  
+    
+
         
         return fight_desc_d
     
