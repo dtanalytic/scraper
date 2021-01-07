@@ -13,6 +13,8 @@ sys.path.append('../')
 from general_modules import net_scrape
 import time
 import ctypes
+from general import PAGES_LOAD_STOP_NUM,REC_IGN_BEF_STOP_MAX
+
 
 def set_trace():
 	from IPython.core.debugger import Pdb
@@ -44,15 +46,14 @@ class AvitoFlatParser(avito_product_parser.AvitoProductParser):
                            'total_floors': '', 'metro': '', 'm_distance': '', 'adr': '', 'date_time': '','builder':'',
                            'desc': '', 'house_type': '', 'page_num': '','dist_cent':'','build_age':'','district':'','lat':'','lon':''}
 
-    delay = 5
     flats_age_filename = r'c:\work\dev\python\progs\scraper\flats_age.csv'
     city_name ='Владикавказ'
     city_cent =(43.024531, 44.682651)
 
     flag_continue_searching_dist=True
 
-    def __init__(self,cur_url, tag_container_el,tag_el,tag_container_pages, tag_page, page_param, pages_load_stop_num):
-        super().__init__(cur_url, tag_container_el,tag_el,tag_container_pages, tag_page, page_param,pages_load_stop_num)
+    def __init__(self,cur_url,page_param, delay, tag_container_el,tag_el,tag_container_pages, tag_page, rec_ign_bef_stop_max=REC_IGN_BEF_STOP_MAX, pages_load_stop_num=PAGES_LOAD_STOP_NUM):
+        super().__init__(cur_url,page_param, delay,tag_container_el,tag_el,tag_container_pages, tag_page, rec_ign_bef_stop_max=REC_IGN_BEF_STOP_MAX, pages_load_stop_num=PAGES_LOAD_STOP_NUM)
 
     @classmethod
     def makeStbsFloat(cls,df,list_stbs):

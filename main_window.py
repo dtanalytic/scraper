@@ -112,7 +112,6 @@ def writeDfThread(page_parser,messages_queue, item_last_datetime):
 
    except (StopException,Exception) as e:
        
-       #  переписать not isinstance(e, StopException)
        if not isinstance(e, StopException):
            messages_queue.put('Исключение {}'.format(e))
 

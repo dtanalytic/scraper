@@ -119,11 +119,18 @@ if __name__=='__main__':
     # messagebox.showinfo('остановка')
     # root.mainloop()
     # unittest.main()
-    import pandas as pd
+    import pandas as pd 
     df = pd.read_csv('items.csv')
     
-    # df2 = df[['Date','event_place','Event']]
+    # # df2 = df[['Date','event_place','Event']]
         
-    with open('params_page_parser','rb') as f_r:
-        d = pickle.load(f_r)
+    # with open('params_page_parser','rb') as f_r:
+    #     d = pickle.load(f_r)
     
+    # with open('ark/params_page_parser','rb') as f_r:
+    #     d2 = pickle.load(f_r)
+    
+    # df2 = pd.read_csv('ark/items.csv')
+
+    # df.Event.nunique()
+    # df.loc[df.Event.str.contains('UFC \d{1,}'),'Event' ].nunique()   

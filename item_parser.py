@@ -59,6 +59,8 @@ class ItemsParser(metaclass=ABCMeta):
         tag_list =''
         
         try:
+            # если страница уже скачивалась, то опять не качаем и вместо url
+            # передаем ее в виде классов либо BeautifulSoup либо Tag
             if not isinstance(url_bs4,BeautifulSoup) and not isinstance(url_bs4,Tag):
                 html = net_scrape.get_url_delay(delay, url_bs4).text
                 bsObj = BeautifulSoup(html, 'lxml')
@@ -111,7 +113,7 @@ class ItemsParser(metaclass=ABCMeta):
                 # зависит от конкретного сайта
                 items_hrefs = self.get_item_hrefs(self.cur_url,self.tag_container_el,self.tag_el, self.delay)
                 # собирает записи по полученным ссылкам, реализована ранее
-                self.get_items_params(items_hrefs, messages_queue, item_last_datetime)
+                self.get_items_params(list(set(items_hrefs)), messages_queue, item_last_datetime)
                 # items_list = self.get_items_params(items_hrefs, messages_queue, item_last_datetime)
                 # self.items_list.extend(items_list)
                 
@@ -190,79 +192,83 @@ class YoulaProductParser(ItemsParser):
 
     
 if __name__=='__main__':
-    np.random.seed(1)
+    
+    
     from ufc.ufc_fights_parser import UFCFightsParser
     # адрес www и ?
-    cur_url = 'http://www.ufcstats.com/event-details/b26d3e3746fb4024?'
-    events_url = 'http://www.ufcstats.com/statistics/events/completed?page=2'
-    
+    cur_url = 'http://www.ufcstats.com/event-details/a7b48e18ca27795d?'
+    events_url = 'http://www.ufcstats.com/statistics/events/completed?page=21'  
     
     tag_container_events = 'tbody,,'
     tag_event = 'a,class,b-link b-link_style_black'
     tag_container_el = 'tbody,class,b-fight-details__table-body'
-    tag_el = 'a,class,b-flag b-flag_style_green'
+    tag_el = 'a,class,b-flag'
     page_param = 'page'
     delay = 1
     ufc_fights = UFCFightsParser(cur_url,events_url,delay,page_param,tag_container_events, tag_event, tag_container_el,tag_el)
     
-    saved_d = {
+    # saved_d = {
 
-        'cur_url':'http://www.ufcstats.com/event-details/5df17b3620145578?',
-        # номер страницы с турниром на сайте
-        # задается в виде строки для внутрен. манипуляций
-        'cur_page':'2',
-        # номер записи с которой начнется скачивание
-        'records_pass_in_page_num':2,
-        # полный url страницы с турнирами
-        'events_url':'http://www.ufcstats.com/statistics/events/completed?page=2',
-        # номер турнира на странице ссылок на турниры
-        'event_ind':0,
-        'events_hrefs':['http://www.ufcstats.com/event-details/5df17b3620145578'],
-        'event_date':'February 15, 2020',
-        'event_place':'vlad',
-        'event_attendence':1212
-                }
+    #     'cur_url':'http://www.ufcstats.com/event-details/5df17b3620145578?',
+    #     # номер страницы с турниром на сайте
+    #     # задается в виде строки для внутрен. манипуляций
+    #     'cur_page':'2',
+    #     # номер записи с которой начнется скачивание
+    #     'records_pass_in_page_num':2,
+    #     # полный url страницы с турнирами
+    #     'events_url':'http://www.ufcstats.com/statistics/events/completed?page=2',
+    #     # номер турнира на странице ссылок на турниры
+    #     'event_ind':0,
+    #     'events_hrefs':['http://www.ufcstats.com/event-details/5df17b3620145578'],
+    #     'event_date':'February 15, 2020',
+    #     'event_place':'vlad',
+    #     'event_attendence':1212
+    #             }
+    
+    # ufc_fights.load_class_params(saved_d)
 
-    
-    ufc_fights.load_class_params(saved_d)
-    
+
+    # так качаем конкретный event
+    # events_url и event_url
     items_hrefs = ufc_fights.get_item_hrefs(ufc_fights.cur_url,\
-                            ufc_fights.tag_container_el,ufc_fights.tag_el, ufc_fights.delay)
-    # собирает записи по полученным ссылкам, реализована ранее
-    # ufc_fights.get_items_params(items_hrefs)
+                ufc_fights.tag_container_el,ufc_fights.tag_el, ufc_fights.delay)
 
-    url = items_hrefs[ufc_fights.records_pass_in_page_num]
-                
-    item_params = ufc_fights.get_one_item_params(url)
-    'Montana' in item_params['Fighter_left']
+    ufc_fights.get_items_params(list(set(items_hrefs)))
     
-    # ufc_fights.start_items_parser()
-    # hrefs=['http://ufcstats.com/fight-details/f8dd1e75978a3957',
-    #        'http://ufcstats.com/fight-details/d395828f5cb045a5',
-    #        'http://ufcstats.com/fight-details/4e77cc2c8d604241',
-    #        'http://ufcstats.com/fight-details/f8dd1e75978a3957',
-    #        'http://ufcstats.com/fight-details/f8dd1e75978a3957',
-    #        'http://ufcstats.com/fight-details/d395828f5cb045a5',
-    #        'http://ufcstats.com/fight-details/d395828f5cb045a5'
-    #        ]
-    #
-    # item_last_datetime = datetime.now()-timedelta(days=360)
-    # try:
-    #     items = ufc_fights.get_items_params(hrefs, item_last_datetime = item_last_datetime)
-    #
-    # except:
-    #     print('Исключение')
+    items_list = ufc_fights.items_list
+
+    import pandas as pd
+    frame = pd.DataFrame(items_list)
+    frame.to_csv('one_event.csv', index=False)    
+    
+    frame_new = pd.read_csv('one_event.csv')
+    frame_old = pd.read_csv('items.csv')
+    
+    frame_old1 = frame_old.iloc[:5716]
+    
+    frame_old2 = frame_old.iloc[5716:]
+    frame_old = pd.concat([frame_old1,frame_new,frame_old2], ignore_index=True)
+    
+    # frame_old.to_csv('ufc_fights.csv', index=False) 
+    
+    # frame = pd.concat([frame_new,frame_old], ignore_index=True)
+    # frame.to_csv('items.csv', index=False)
+    
+    
     
     
     
     # delay = 1
-    # url = 'http://ufcstats.com/statistics/events/completed'
+    # url = 'http://www.ufcstats.com/event-details/805ad1801eb26abb'
     # html = net_scrape.get_url_delay(delay=delay, url = url).text
     # bsObj = BeautifulSoup(html, 'lxml')
-    # tag_container_list = []    
-    
-    # hrefs = bsObj.find_all('a',{'href':'http://ufcstats.com/event-details/4c12aa7ca246e7a4'})
 
+    # l = bsObj.find_all('a',{'class':'b-flag'})
+
+
+    
+    # tag_container_el = 'tbody,class,b-fight-details__table-body'
+    # tag_el = 'a,class,b-flag b-flag_style_green'
     
     # tag_container_el='ul,class,product_list _board_items'
     # tag_el='li,class,product_item'
