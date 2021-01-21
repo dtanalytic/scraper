@@ -63,7 +63,8 @@ if __name__=='__main__':
     
     df = pd.read_csv(r'c:\work\dev\python\progs\scraper\flats.csv')
 
-    df = df_drop(df, list_duples=['total_square', 'total_floors', 'floor', 'rooms_num', 'house_type', 'adr'])
+    df = df_drop(df, list_duples=['total_square', 'total_floors', 'floor', 
+                                  'rooms_num', 'house_type', 'adr'])
     # df = df_drop(df, list_duples=['total_square', 'total_floors', 'floor', 'rooms_num', 'house_type', 'desc'])
     
     # дату и время добавляем и преобразум к типу даты
@@ -281,6 +282,11 @@ if __name__=='__main__':
     plt.ylabel('величина остатков (рыночная цена - предсказанная )')
     plt.grid(b=True)
     plt.show()
+    
+    # import xgboost as xgb
+    
+    # reg  = xgb.XGBRegressor(n_estimators=100,max_depth=20)
+    
     # # y_test_orig = a.de_normalize(y_test,'cost')
     # # y_predicted = a.de_normalize(predicted,'cost')
     # # y_orig = df_orig.iloc[y_test_orig.index]

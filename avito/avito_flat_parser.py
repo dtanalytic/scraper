@@ -105,8 +105,9 @@ class AvitoFlatParser(avito_product_parser.AvitoProductParser):
         df_flat_age=df_flat_age[[param,'cl_adr']]
 
         df_flat_age.loc[df_flat_age['cl_adr'].notnull(), 'cl_adr'] = df_flat_age.loc[df_flat_age['cl_adr'].notnull(), 'cl_adr'].map(lambda x: x.strip())
-
+        df_flat_age = df_flat_age.drop_duplicates(subset=['cl_adr'])
         df_flat_age = df_flat_age.set_index(['cl_adr'])
+        
 
         return df_flat_age.T.to_dict('list')
     
@@ -160,9 +161,6 @@ class AvitoFlatParser(avito_product_parser.AvitoProductParser):
         stbs_part.loc[stbs_part['build_age'].notnull(), 'build_age'] = stbs_part.loc[
             stbs_part['build_age'].notnull(), 'build_age'].map(map_dict_house_age)
 
-        # stbs_part.loc[stbs_part['build_age'].isnull(), 'build_age'] = stbs_part.loc[ \
-        #     stbs_part['build_age'].isnull(), 'cl_adr'].map( \
-        #     lambda x: AvitoFlatParser.levenDistForNull(x, dict_house_age))
 
         df.loc[range(start, end), ['build_age', 'cl_adr']] = stbs_part
 
@@ -175,19 +173,16 @@ class AvitoFlatParser(avito_product_parser.AvitoProductParser):
 
         street = ''
         street_part = ''
-        num = ''
-        one_symb = ''
+        num = ''        
 
         re_parts = re.search('(ул|пер|пр-т|пр-кт|пр|Ул|Пер|Пр)(\.|ица|еулок|оспект){0,1}([^а-я])([А-Яа-я\s\.]{0,}).*?(\d{1,4})', str)
 
-
         if re_parts:
-            __, __, one_symb, street, num = re_parts.groups()
+            __, __, __, street, num = re_parts.groups()
             street_part = street.strip()
-            street = one_symb + street_part
             street = street.strip()
-            num = num.strip()
-
+            num = num.strip()        
+        
         if street_part == '' or num == '':
             re_parts = re.search(',*([А-Яа-я\s\.]{0,})(ул|пер|пр-т|пр-кт|пр|Ул|Пер|Пр)(\.|ица|еулок|оспект){0,1}[,\s]*(\d{1,4})', str)
             if re_parts:

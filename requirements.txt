@@ -1,0 +1,12 @@
+requests
+beautifulsoup4
+lxml
+ipython
+matplotlib
+numpy
+pandas
+scikit-learn
+scipy
+geopy
+
+

@@ -367,9 +367,6 @@ def add_cols_func_list(df,col_func_dict):
 
 if __name__=='__main__':
 
-   # from importlib import reload
-   # reload(my_util.df_util)
-
 
     df = pd.read_csv(r'../flats_add.csv')
     # df2 = pd.read_csv(r'c:\work\dev\python\progs\scraper\flats2.csv')
