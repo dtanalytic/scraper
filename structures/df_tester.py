@@ -179,9 +179,10 @@ def form_indic_pattern_center_w_around_w_l(search_series,word_cent,around_w_l):
     ind_temp = pd.Series([False]*len(search_series))
 
     for word in around_w_l: 	
-         templ_l = re.compile(r'{}[а-я]*\s+{}[а-я]*'.format(word,word_cent))
-         templ_r = re.compile(r'{}[а-я]*\s+{}[а-я]*'.format(word_cent,word))
-         
+         # templ_l = re.compile(r'{}[а-я]*\s+{}[а-я]*'.format(word,word_cent))
+         # templ_r = re.compile(r'{}[а-я]*\s+{}[а-я]*'.format(word_cent,word))
+         templ_l = re.compile(r'{}[а-я.-]*\s*{}[а-я.-]*'.format(word,word_cent))
+         templ_r = re.compile(r'{}[а-я.-]*\s*{}[а-я.-]*'.format(word_cent,word))
          ind_temp = np.any(pd.concat([search_series.str.contains(templ_l), search_series.str.contains(templ_r)],axis=1),axis=1)
          ind_final = np.any(pd.concat([ind_final, ind_temp],axis=1),axis=1)
          

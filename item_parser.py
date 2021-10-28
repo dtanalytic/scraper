@@ -20,7 +20,8 @@ from datetime import datetime,timedelta
     
 class ItemsParser(metaclass=ABCMeta):    
         
-    def __init__(self,cur_url, tag_container_el,tag_el, rec_ign_bef_stop_max = REC_IGN_BEF_STOP_MAX, pages_load_stop_num=PAGES_LOAD_STOP_NUM):
+    def __init__(self,cur_url, tag_container_el,tag_el, rec_ign_bef_stop_max = 
+                 REC_IGN_BEF_STOP_MAX, pages_load_stop_num=PAGES_LOAD_STOP_NUM):
         self.cur_url = cur_url
         # строчные описания для тега контейнера ссылок и тегов,
         # в которых непосредственно хранятся ссылки 
@@ -111,16 +112,18 @@ class ItemsParser(metaclass=ABCMeta):
                 # получает ссылки на товары/события с текущей страницы,
                 # реализуется в специфическом модуле, так как
                 # зависит от конкретного сайта
-                items_hrefs = self.get_item_hrefs(self.cur_url,self.tag_container_el,self.tag_el, self.delay)
+                items_hrefs = self.get_item_hrefs(self.cur_url,self.tag_container_el,
+                                                  self.tag_el, self.delay)
                 # собирает записи по полученным ссылкам, реализована ранее
-                self.get_items_params(list(set(items_hrefs)), messages_queue, item_last_datetime)
-                # items_list = self.get_items_params(items_hrefs, messages_queue, item_last_datetime)
-                # self.items_list.extend(items_list)
+                self.get_items_params(list(set(items_hrefs)), messages_queue, 
+                                      item_last_datetime)
                 
                 if messages_queue:
                     time2 = time.time()
-                    messages_queue.put('закончили итерацию по {} странице, ее обработка заняла {} секунд'\
-                                       .format(self.params[self.page_param], time2-time1))
+                    messages_queue.put('''закончили итерацию по {} странице, 
+                                       ее обработка заняла {} секунд'''\
+                                       .format(self.params[self.page_param], 
+                                               time2-time1))
                 # получение url новой страницы,
                 # реализуется в специфическом модуле
                 self.cur_url = self.get_next_url()
@@ -157,7 +160,8 @@ class ItemsParser(metaclass=ABCMeta):
                         self.rec_ign_bef_stop_num = self.rec_ign_bef_stop_num+1
                         if messages_queue:
                             messages_queue.put('ignore {}'.format(self.rec_ign_bef_stop_num))
-                    if self.rec_ign_bef_stop_num>self.rec_ign_bef_stop_max: raise NoMoreNewRecordsException
+                    if self.rec_ign_bef_stop_num>self.rec_ign_bef_stop_max: 
+                        raise NoMoreNewRecordsException
                 # если не надо игнорировать то добавляем
                 if records_ignore_was == self.rec_ign_bef_stop_num:
                      self.items_list.append(item_params)
@@ -165,7 +169,8 @@ class ItemsParser(metaclass=ABCMeta):
                 self.records_pass_in_page_num += 1
                 if messages_queue:
                     time2 = time.time()
-                    messages_queue.put('{} запись, ее обработка заняла {} секунд'.format(j,time2-time1))
+                    messages_queue.put('{} запись, ее обработка заняла {} секунд'
+                                       .format(j,time2-time1))
                 
               else:
                 raise StopException
@@ -196,9 +201,8 @@ if __name__=='__main__':
     
     from ufc.ufc_fights_parser import UFCFightsParser
     # адрес www и ?
-    cur_url = 'http://www.ufcstats.com/event-details/a7b48e18ca27795d?'
-    events_url = 'http://www.ufcstats.com/statistics/events/completed?page=21'  
-    
+    cur_url = 'http://www.ufcstats.com/event-details/a1153013cb5f628f?'
+    events_url = 'http://www.ufcstats.com/statistics/events/completed?page=1'  
     tag_container_events = 'tbody,,'
     tag_event = 'a,class,b-link b-link_style_black'
     tag_container_el = 'tbody,class,b-fight-details__table-body'
@@ -244,15 +248,15 @@ if __name__=='__main__':
     frame_new = pd.read_csv('one_event.csv')
     frame_old = pd.read_csv('items.csv')
     
-    frame_old1 = frame_old.iloc[:5716]
+    # frame_old1 = frame_old.iloc[:5716]
     
-    frame_old2 = frame_old.iloc[5716:]
-    frame_old = pd.concat([frame_old1,frame_new,frame_old2], ignore_index=True)
+    # frame_old2 = frame_old.iloc[5716:]
+    # frame_old = pd.concat([frame_old1,frame_new,frame_old2], ignore_index=True)
     
     # frame_old.to_csv('ufc_fights.csv', index=False) 
     
-    # frame = pd.concat([frame_new,frame_old], ignore_index=True)
-    # frame.to_csv('items.csv', index=False)
+    frame = pd.concat([frame_new,frame_old], ignore_index=True)
+    frame.to_csv('items.csv', index=False)
     
     
     

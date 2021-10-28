@@ -21,7 +21,9 @@ from nltk import word_tokenize
 class UFCFightsParser(ItemsParser):
     
 
-    def __init__(self,cur_url, events_url, delay, page_param, tag_container_events,tag_event, tag_container_el, tag_el, rec_ign_bef_stop_max=REC_IGN_BEF_STOP_MAX, pages_load_stop_num=PAGES_LOAD_STOP_NUM):
+    def __init__(self,cur_url, events_url, delay, page_param, tag_container_events,
+                 tag_event, tag_container_el, tag_el, 
+                 rec_ign_bef_stop_max=REC_IGN_BEF_STOP_MAX, pages_load_stop_num=PAGES_LOAD_STOP_NUM):
         
         # страница со ссылками на события/турниры
         self.events_url = events_url
@@ -40,7 +42,8 @@ class UFCFightsParser(ItemsParser):
         self.delay=delay
         # конструктор базового класса ItemsParser
         super().__init__(cur_url, tag_container_el,tag_el, rec_ign_bef_stop_max, pages_load_stop_num)
-        events_hrefs_tags, _ = self.get_items_list_from2tags(self.events_url,self.tag_container_events,self.tag_event, self.delay)
+        events_hrefs_tags, _ = self.get_items_list_from2tags(self.events_url,
+                                                self.tag_container_events,self.tag_event, self.delay)
         # ссылки на все события на странице events_url
         self.events_hrefs = [item.attrs['href'] for item in events_hrefs_tags]
         
@@ -70,7 +73,8 @@ class UFCFightsParser(ItemsParser):
                 # ссылки на новую страницу UFC
                 self.events_url = self.make_url_from_parts(self.url_base, self.url_add, self.params)
                 # обновляем поля, описанные в конструкторе
-                events_hrefs_tags, _ = self.get_items_list_from2tags(self.events_url,self.tag_container_events,self.tag_event, self.delay)
+                events_hrefs_tags, _ = self.get_items_list_from2tags(self.events_url,
+                                                self.tag_container_events,self.tag_event, self.delay)
                 if events_hrefs_tags:
                     self.events_hrefs = [item.attrs['href'] for item in events_hrefs_tags]
                     self.event_ind = 0
@@ -86,7 +90,8 @@ class UFCFightsParser(ItemsParser):
          #                self.get_event_inf(self.events_hrefs[self.event_ind]+"?",'i,class,b-list__box-item-title') 
 
          self.event_date, self.event_place = \
-                        self.get_event_inf(self.events_hrefs[self.event_ind]+"?",'i,class,b-list__box-item-title') 
+                        self.get_event_inf(self.events_hrefs[self.event_ind]+"?",
+                                           'i,class,b-list__box-item-title') 
 
          return self.events_hrefs[self.event_ind]+"?"
      
@@ -108,7 +113,8 @@ class UFCFightsParser(ItemsParser):
         class_params_init['event_place'] = self.event_place
         # class_params_init['event_attendence'] = self.event_attendence        
 
-        class_params_init['last_date'] = self.items_list[-1]['Date'] if not len(self.items_list)==0 else ''
+        class_params_init['last_date'] = self.items_list[-1]['Date'] \
+                                        if not len(self.items_list)==0 else ''
 
         return class_params_init 
     
@@ -135,7 +141,8 @@ class UFCFightsParser(ItemsParser):
 
     @classmethod    
     def get_head_details(cls, section, tag_container, tag_els, delay):
-        sec_head_t,_ = ItemsParser.get_items_list_from2tags(section,tag_container,tag_els, delay)
+        sec_head_t,_ = ItemsParser.get_items_list_from2tags(section,tag_container
+                                                            ,tag_els, delay)
         sec_head = [item.get_text().strip() for item in sec_head_t]    
         return sec_head
     
@@ -221,21 +228,26 @@ class UFCFightsParser(ItemsParser):
                   pass
             
     
-            sign_act_head = UFCFightsParser.get_head_details(sections[0],'thead,class,b-fight-details__table-head',\
-                                                        'th,class,b-fight-details__table-col', self.delay)
+            sign_act_head = UFCFightsParser.get_head_details(
+                            sections[0],'thead,class,b-fight-details__table-head',
+                            'th,class,b-fight-details__table-col', self.delay)
             
             
-            sign_st_head = UFCFightsParser.get_head_details(sign_st_table,'thead,class,b-fight-details__table-head',\
-                                                        'th,class,b-fight-details__table-col', self.delay)
+            sign_st_head = UFCFightsParser.get_head_details(
+                            sign_st_table,'thead,class,b-fight-details__table-head',
+                            'th,class,b-fight-details__table-col', self.delay)
                     
     
                         
-            sign_act_body_t,_ = ItemsParser.get_items_list_from2tags(sections[0],'tbody,class,b-fight-details__table-body',\
-                                                        'td,class,b-fight-details__table-col', self.delay)
+            sign_act_body_t,_ = ItemsParser.get_items_list_from2tags(
+                            sections[0],'tbody,class,b-fight-details__table-body',
+                            'td,class,b-fight-details__table-col', self.delay)
+            
             sign_act_body = UFCFightsParser.get_fight_det_l(sign_act_body_t)
             
-            sign_st_body_t,_  = ItemsParser.get_items_list_from2tags(sign_st_table,'tbody,class,b-fight-details__table-body',\
-                                                        'td,class,b-fight-details__table-col', self.delay)
+            sign_st_body_t,_  = ItemsParser.get_items_list_from2tags(sign_st_table,
+                            'tbody,class,b-fight-details__table-body',
+                            'td,class,b-fight-details__table-col', self.delay)
             sign_st_body = UFCFightsParser.get_fight_det_l(sign_st_body_t)
     
                 
@@ -253,10 +265,12 @@ class UFCFightsParser(ItemsParser):
             rounds_body = sections[1].findAll('tr',{'class','b-fight-details__table-row'})
             for i,sec in enumerate(rounds_body):
                 if (i!=0):
-                    sign_act_rounds.append(UFCFightsParser.get_fight_det_l(sec.findAll('td',{'class':'b-fight-details__table-col'})))
+                    sign_act_rounds.append(UFCFightsParser.get_fight_det_l(
+                            sec.findAll('td',{'class':'b-fight-details__table-col'})))
         
             for i,round_stat in enumerate(sign_act_rounds):
-                UFCFightsParser.fill_2fighters_stat(fight_desc_d,sign_act_head,round_stat,round_num=f'_{(i+1)}')
+                UFCFightsParser.fill_2fighters_stat(
+                            fight_desc_d,sign_act_head,round_stat,round_num=f'_{(i+1)}')
                 
         
             sign_st_rounds=[]
@@ -264,10 +278,13 @@ class UFCFightsParser(ItemsParser):
             
             for i,sec in enumerate(rounds_body):
                 if (i!=0):
-                    sign_st_rounds.append(UFCFightsParser.get_fight_det_l(sec.findAll('td',{'class':'b-fight-details__table-col'})))
+                    sign_st_rounds.append(
+                            UFCFightsParser.get_fight_det_l(sec.findAll('td',
+                                                {'class':'b-fight-details__table-col'})))
         
             for i,round_stat in enumerate(sign_st_rounds):
-                UFCFightsParser.fill_2fighters_stat(fight_desc_d,sign_st_head,round_stat,round_num=f'_{(i+1)}')
+                UFCFightsParser.fill_2fighters_stat(fight_desc_d,sign_st_head,
+                                                    round_stat,round_num=f'_{(i+1)}')
                 
         except IndexError:
             pass
