@@ -2,10 +2,12 @@
 from collections import OrderedDict
 from datetime import datetime,timedelta
 from bs4 import BeautifulSoup
+import bs4
 import numpy as np
 import sys
 sys.path.append('../')
 from general_modules import net_scrape
+
 from general import StopException,NoMoreNewRecordsException
 from general import PAGES_LOAD_STOP_NUM,REC_IGN_BEF_STOP_MAX
 from general import set_eng_locale
@@ -173,14 +175,20 @@ class UFCFightsParser(ItemsParser):
             event_inf.append(tag.parent.get_text().replace(tag.get_text().strip(),'').strip())
     
         return event_inf
-                
+
+    @classmethod
+    def get_dict_tags_text(cls, parent_tag):
+        first_child = [it for it in parent_tag if isinstance(it, bs4.element.Tag)][0]
+        key = first_child.get_text().strip()
+        value = parent_tag.get_text().strip().replace(key, '').strip()
+        return (key, value)
+
     def get_one_item_params(self, url):
         
         html = net_scrape.get_url_delay(url = url, delay=self.delay).text
         bsObj = BeautifulSoup(html, 'lxml')
         # словарь с описанием всего события
         fight_desc_d = OrderedDict()
-
         
         # далее извлекается содержимое
         # описанным ранее методом
@@ -198,15 +206,27 @@ class UFCFightsParser(ItemsParser):
         fight_desc_d['Win_lose_right'] = f_res[1]
         
         f_det_res_t = bsObj.findAll('i',{'class':'b-fight-details__label'})
-       
+
         det_res = {}
-        for i,f_det_res_tag in enumerate(f_det_res_t):
+        for i, f_det_res_tag in enumerate(f_det_res_t):
             key = f_det_res_tag.get_text().strip()
-            if not key=='Details:':
-                det_res[key] = f_det_res_tag.parent.get_text().strip().replace(key,'').strip()
+            if not key == 'Details:':
+                k, v = UFCFightsParser.get_dict_tags_text(f_det_res_tag.parent)
+                det_res[k] = v
             else:
-                det_res[key] = f_det_res_tag.parent.parent.get_text().strip().replace(key,'').strip()
-                
+                det_tag = f_det_res_tag.parent.parent
+                childs = list(det_tag.children)
+                childs = [it for it in childs if isinstance(it, bs4.element.Tag)]
+                if len(childs) == 1:
+                    k, v = UFCFightsParser.get_dict_tags_text(det_tag)
+                    det_res[k] = v
+                else:
+                    s = ''
+                    for child_tag in childs[1:]:
+                        s = s + ':'.join(UFCFightsParser.get_dict_tags_text(child_tag)) + ';'
+                    det_res[key] = s
+
+
         fight_desc_d.update(det_res)
         
         with set_eng_locale():
@@ -298,32 +318,50 @@ class UFCFightsParser(ItemsParser):
     
     
 if __name__ == '__main__':
-    
-    # cur_url = 'http://www.ufcstats.com/event-details/542db012217ecb83?'
-    # events_url='http://www.ufcstats.com/statistics/events/completed?page=1'
-    # tag_container_pages='tbody,,'
-    # tag_page='a,class,b-link b-link_style_black'
-    # tag_container_el = 'tbody,class,b-fight-details__table-body'
-    # tag_el = 'a,class,b-flag b-flag_style_green'
-    # page_param = 'page'
-    # delay = 1
-    # ufc_fights = UFCFightsParser(cur_url,events_url,delay,page_param,tag_container_pages, tag_page, tag_container_el,tag_el)
-    
-    
-    
+
+    # to scrape event
+    # ----------------------------------------------------------
+    cur_url = 'http://www.ufcstats.com/event-details/8a9c6c4301f6d088?'
+    events_url='http://www.ufcstats.com/statistics/events/completed?page=1'
+    tag_container_pages='tbody,,'
+    tag_page='a,class,b-link b-link_style_black'
+    tag_container_el = 'tbody,class,b-fight-details__table-body'
+    tag_el = 'a,class,b-flag b-flag_style_green'
+    page_param = 'page'
     delay = 1
-    url = 'http://www.ufcstats.com/event-details/33b2f68ef95252e0?'
-    html = net_scrape.get_url_delay(delay=delay, url = url).text
-    bsObj = BeautifulSoup(html, 'lxml')
+    ufc_fights = UFCFightsParser(cur_url,events_url,delay,page_param,tag_container_pages, tag_page, tag_container_el,tag_el)
 
-    event_inf = []
-    event_inf_tags = bsObj.findAll('i',{'class':'b-list__box-item-title'})
-    for i,tag in enumerate(event_inf_tags):
-            event_inf.append(tag.parent.get_text().replace(tag.get_text().strip(),'').strip())
-    
+    # так качаем конкретный event
+    items_hrefs = ufc_fights.get_item_hrefs(ufc_fights.cur_url, \
+                                            ufc_fights.tag_container_el, ufc_fights.tag_el, ufc_fights.delay)
 
-    
-    # # fight_desc_d_init = {'event':'','fighter_left':'', 'fighter_right':'','win_lose_left':'','win_lose_right':''                         }
+    ufc_fights.get_items_params(list(set(items_hrefs)))
+
+    items_list = ufc_fights.items_list
+
+    # dump to pandas
+    import pandas as pd
+    frame = pd.DataFrame(items_list)
+    # # frame.to_csv('one_event.csv', index=False)
+    # # frame_new = pd.read_csv('one_event.csv')
+    # # frame_old = pd.read_csv('items.csv')
+    # # ----------------------------------------
+
+    # ------------------------------------
+    # # find smth on page
+    # delay = 1
+    # url = 'http://www.ufcstats.com/fight-details/860be3cc82895177?'
+    # html = net_scrape.get_url_delay(delay=delay, url = url).text
+    # bsObj = BeautifulSoup(html, 'lxml')
+    # #
+    # event_inf = []
+    # event_inf_tags = bsObj.findAll('i',{'class':'b-list__box-item-title'})
+    # for i,tag in enumerate(event_inf_tags):
+    #         event_inf.append(tag.parent.get_text().replace(tag.get_text().strip(),'').strip())
+    # -------------------------------------
+
+
+    # fight_desc_d_init = {'event':'','fighter_left':'', 'fighter_right':'','win_lose_left':'','win_lose_right':''                         }
     # fight_desc_d = OrderedDict()
     
     # event = bsObj.find('a',{'class':'b-link'}).get_text().strip()
@@ -340,7 +378,7 @@ if __name__ == '__main__':
     # fight_desc_d['Win_lose_right'] = f_res[1]
     
     # f_det_res_t = bsObj.findAll('i',{'class':'b-fight-details__label'})
-   
+
     # det_res = {}
     # for i,f_det_res_tag in enumerate(f_det_res_t):
     #     key = f_det_res_tag.get_text().strip()
@@ -348,6 +386,27 @@ if __name__ == '__main__':
     #         det_res[key] = f_det_res_tag.parent.get_text().strip().replace(key,'').strip()
     #     else:
     #         det_res[key] = f_det_res_tag.parent.parent.get_text().strip().replace(key,'').strip()
+    #
+    # f_det_res_t = bsObj.findAll('i', {'class': 'b-fight-details__label'})
+
+    # det_res = {}
+    # for i, f_det_res_tag in enumerate(f_det_res_t):
+    #     key = f_det_res_tag.get_text().strip()
+    #     if not key == 'Details:':
+    #         k, v = ufc_fights.get_dict_tags_text(f_det_res_tag.parent)
+    #         det_res[k] = v
+    #     else:
+    #         det_tag = f_det_res_tag.parent.parent
+    #         childs = list(det_tag.children)
+    #         childs = [it for it in childs if isinstance(it, bs4.element.Tag)]
+    #         if len(childs) == 1:
+    #             k, v = ufc_fights.get_dict_tags_text(det_tag)
+    #             det_res[k] = v
+    #         else:
+    #             s = ''
+    #             for child_tag in childs[1:]:
+    #                 s = s + ':'.join(ufc_fights.get_dict_tags_text(child_tag)) + ';'
+    #             det_res[key] = s
             
     # fight_desc_d.update(det_res)
     

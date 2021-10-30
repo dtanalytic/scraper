@@ -232,35 +232,7 @@ if __name__=='__main__':
     # ufc_fights.load_class_params(saved_d)
 
 
-    # так качаем конкретный event
-    # events_url и event_url
-    items_hrefs = ufc_fights.get_item_hrefs(ufc_fights.cur_url,\
-                ufc_fights.tag_container_el,ufc_fights.tag_el, ufc_fights.delay)
 
-    ufc_fights.get_items_params(list(set(items_hrefs)))
-    
-    items_list = ufc_fights.items_list
-
-    import pandas as pd
-    frame = pd.DataFrame(items_list)
-    frame.to_csv('one_event.csv', index=False)    
-    
-    frame_new = pd.read_csv('one_event.csv')
-    frame_old = pd.read_csv('items.csv')
-    
-    # frame_old1 = frame_old.iloc[:5716]
-    
-    # frame_old2 = frame_old.iloc[5716:]
-    # frame_old = pd.concat([frame_old1,frame_new,frame_old2], ignore_index=True)
-    
-    # frame_old.to_csv('ufc_fights.csv', index=False) 
-    
-    frame = pd.concat([frame_new,frame_old], ignore_index=True)
-    frame.to_csv('items.csv', index=False)
-    
-    
-    
-    
     
     # delay = 1
     # url = 'http://www.ufcstats.com/event-details/805ad1801eb26abb'
