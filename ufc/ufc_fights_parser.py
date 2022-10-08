@@ -12,7 +12,7 @@ from general import StopException,NoMoreNewRecordsException
 from general import PAGES_LOAD_STOP_NUM,REC_IGN_BEF_STOP_MAX
 from general import set_eng_locale
 from item_parser import ItemsParser
-from nltk import word_tokenize
+# from nltk import word_tokenize
 
 # delay = 1
 # UFC_FIGHT_TAGS = [('a','class','b-link b-link_style_black')
@@ -223,7 +223,7 @@ class UFCFightsParser(ItemsParser):
                 else:
                     s = ''
                     for child_tag in childs[1:]:
-                        s = s + ':'.join(UFCFightsParser.get_dict_tags_text(child_tag)) + ';'
+                        s = s + ':'.join(UFCFightsParser.get_dict_tags_text(child_tag))
                     det_res[key] = s
 
 
@@ -321,7 +321,9 @@ if __name__ == '__main__':
 
     # to scrape event
     # ----------------------------------------------------------
-    cur_url = 'http://www.ufcstats.com/event-details/8a9c6c4301f6d088?'
+    cur_url = 'http://www.ufcstats.com/event-details/77940e45bc86208e?'
+
+
     events_url='http://www.ufcstats.com/statistics/events/completed?page=1'
     tag_container_pages='tbody,,'
     tag_page='a,class,b-link b-link_style_black'
@@ -342,10 +344,12 @@ if __name__ == '__main__':
     # dump to pandas
     import pandas as pd
     frame = pd.DataFrame(items_list)
-    # # frame.to_csv('one_event.csv', index=False)
-    # # frame_new = pd.read_csv('one_event.csv')
-    # # frame_old = pd.read_csv('items.csv')
-    # # ----------------------------------------
+    frame_old = pd.read_csv('items.csv')
+    frame_all = pd.concat([frame_old, frame], ignore_index=True)
+
+    frame_all.to_csv('items.csv', index=False)
+
+    # ----------------------------------------
 
     # ------------------------------------
     # # find smth on page

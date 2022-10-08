@@ -260,3 +260,9 @@
 2021-01-04 21:27:09,521 INFO Exception - 202 not saved records with items.csv
 2021-01-04 21:27:09,934 INFO with saved 5716 and new recs unifyed length is - 5918
 2021-01-04 21:27:09,934 INFO Р—Р°РїРёСЃСЊ С„Р°Р№Р»Р° items.csv РІРЅСѓС‚СЂРё РёСЃРєР»СЋС‡РµРЅРёСЏ
+2021-10-30 05:57:12,280 INFO Exception - 21 not saved records with items.csv
+2021-10-30 05:57:12,524 INFO with saved 5972 and new recs unifyed length is - 5993
+2021-10-30 05:57:12,524 INFO Запись файла items.csv внутри исключения
+2021-10-30 06:24:35,486 INFO Exception - 661 not saved records with items.csv
+2021-10-30 06:24:35,675 INFO with saved 5993 and new recs unifyed length is - 6654
+2021-10-30 06:24:35,675 INFO Запись файла items.csv внутри исключения
